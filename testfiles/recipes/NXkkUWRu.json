@@ -1,0 +1,183 @@
+{
+  "id": "NXkkUWRu",
+  "lastModified": "2016-02-05T02:24:58.033798Z",
+  "names": [
+    "Hyderabadi Bagara Baingan",
+    "Eggplant in a Peanut-Sesame Gravy"
+  ],
+  "description": "Fried eggplant in a rich peanut and sesame gravy, a legacy of the Nizam rule of Hyderabad in India",
+  "steps": [
+    {
+      "text": "To prepare the eggplants",
+      "decorator": "Heading"
+    },
+    {
+      "text": "If using small baby eggplants, leaving the stem intact, make 5 slits (like *) along the length of the eggplant. It is important that the eggplant is held together at the stem",
+      "decorator": "Text"
+    },
+    {
+      "text": "Otherwise, simply cut into large cubes",
+      "decorator": "Text"
+    },
+    {
+      "text": "Deep fry in hot oil, drain on kitchen towels and set aside",
+      "decorator": "Text"
+    },
+    {
+      "text": "Use a {deep fryer} if you want to. A deep saucepan will do just as well",
+      "decorator": "Quote"
+    },
+    {
+      "text": "To make the gravy",
+      "decorator": "Heading"
+    },
+    {
+      "text": "Cook the tamarind with ½ cup of water in the {microwave} on high for 30 seconds. Cool and squeeze out the tamarind juice. Discard the seeds and fibre and set the juice aside",
+      "decorator": "Text"
+    },
+    {
+      "text": "Roast the peanuts, sesame seeds, khus-khus (poppy seeds) and dry coconut until everything starts to brown",
+      "decorator": "Text"
+    },
+    {
+      "text": "Grind along with the green chillies. Add up to 1 cup of water in small amounts to facilitate grinding and make a smooth paste",
+      "decorator": "Text"
+    },
+    {
+      "text": "Use a {spice mill}, {Indian mixie grinder} or {magic bullet} or something similar. Regular blenders are too large, so they will just toss the contents around instead of grinding them",
+      "decorator": "Quote"
+    },
+    {
+      "text": "In a saucepan, heat 3 tbsp of oil. Add fenugreek seeds, mustard seeds, curry leaves and a pinch of asafoetida and fry till the mustard seeds splutter",
+      "decorator": "Text"
+    },
+    {
+      "text": "Add ginger-garlic paste, coriander powder, cumin powder and turmeric and saute for a minute",
+      "decorator": "Text"
+    },
+    {
+      "text": "Add the ground peanut-sesame paste and fry until you can see oil starting to separate from the mixture. Keep stirring and don't let anything stick to the pan",
+      "decorator": "Text"
+    },
+    {
+      "text": "Add the tamarind juice and 2 cups of water, season with salt and bring to a boil",
+      "decorator": "Text"
+    },
+    {
+      "text": "Bring down to a simmer, add the fried eggplant and cook covered for 5 minutes",
+      "decorator": "Text"
+    }
+  ],
+  "totalTimeInMinutes": 60,
+  "servings": "Serves 7-8",
+  "approved": true,
+  "spiceLevel": "Hot",
+  "region": "Indian Subcontinent",
+  "chefId": "auth0|5710de6b3c7ae40538abdc35",
+  "imageId": "QjWTNJiJ",
+  "ingredients": [
+    {
+      "text": "500 g eggplants, use whole baby eggplants or alternatively cut into large chunks",
+      "decorator": "Text"
+    },
+    {
+      "text": "oil, for deep frying",
+      "decorator": "Text"
+    },
+    {
+      "text": "For the gravy",
+      "decorator": "Heading"
+    },
+    {
+      "text": "½ cup peanuts",
+      "decorator": "Text"
+    },
+    {
+      "text": "¼ cup sesame seeds",
+      "decorator": "Text"
+    },
+    {
+      "text": "1 tbsp white poppy seeds or khus-khus, optional",
+      "decorator": "Text"
+    },
+    {
+      "text": "¾ cup dried coconut, shredded, optional",
+      "decorator": "Text"
+    },
+    {
+      "text": "5-6 green chillies (adjust based on your spice/heat tolerance)",
+      "decorator": "Text"
+    },
+    {
+      "text": "20 g tamarind",
+      "decorator": "Text"
+    },
+    {
+      "text": "3 tbsp oil",
+      "decorator": "Text"
+    },
+    {
+      "text": "1 tsp turmeric powder",
+      "decorator": "Text"
+    },
+    {
+      "text": "1 tbsp ground coriander",
+      "decorator": "Text"
+    },
+    {
+      "text": "2 tsp ground cumin",
+      "decorator": "Text"
+    },
+    {
+      "text": "1 tbsp ginger-garlic paste or ½ tbsp ginger, crushed and ½ tbsp garlic, crushed",
+      "decorator": "Text"
+    },
+    {
+      "text": "1½ tsp mustard seeds",
+      "decorator": "Text"
+    },
+    {
+      "text": "½ tsp fenugreek seeds, optional",
+      "decorator": "Text"
+    },
+    {
+      "text": "10-12 curry leaves",
+      "decorator": "Text"
+    },
+    {
+      "text": "a pinch of asafoetida (hing)",
+      "decorator": "Text"
+    },
+    {
+      "text": "Salt, to taste",
+      "decorator": "Text"
+    }
+  ],
+  "cuisine": "South Indian",
+  "ingredientIds": [
+    "N2YXf2ns",
+    "NjTiracx",
+    "bVx2xwma",
+    "7lZzLbgx",
+    "jnZf_ewk",
+    "Mqf6ueTW",
+    "pkodzwcN",
+    "1Af_VldR",
+    "-GB41Pde",
+    "DfgIn-bx",
+    "_hfTfh3z",
+    "gekWvr9Y",
+    "4qfpoFAN",
+    "hr8-r0DU",
+    "nbfmHKxW",
+    "uB6jpbJQ",
+    "w6QRWRBb",
+    "b6ldX3JK",
+    "JKsRsdaq"
+  ],
+  "overnightPreparation": false,
+  "collections": [
+    "Curries",
+    "Side dishes"
+  ]
+}
