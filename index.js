@@ -1,6 +1,6 @@
 // index.js
 
-const _ = require('underscore')
+const _ = require('lodash')
 
 const S3Proxy = require('./proxies/s3-proxy'),
     s3Proxy = new S3Proxy('recipeshelf')

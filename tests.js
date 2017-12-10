@@ -1,6 +1,6 @@
 // tests.js
 
-var _ = require('underscore')
+var _ = require('lodash')
 var assert = require('assert')
 
 const fs = require('fs')
@@ -16,8 +16,6 @@ AWS.mock('S3', 'getObject', function (params, callback) {
 })
 
 const RedisProxy = require('./proxies/redis-proxy')
-      
-const UpdateRecipe = require('./cache/update-recipe')
 
 const index = require('./index')
 
@@ -122,17 +120,32 @@ const whenAssertNames = (id, names) => {
                             })
 }
 
+const getPhrases = (sentence) => {
+    if (!sentence) return []
+    let phrases = sentence.toLowerCase().split(/[(),!\\.-\s]+/g)
+    phrases = _.filter(phrases, p => p && p.length > 0)        
+    for (let i = phrases.length - 2; i >= 0; i--)
+        phrases[i] = (phrases[i] + ' ' + phrases[i + 1]).trim()
+    return phrases
+}
+
 const whenAssertSearchWords = () => {
-    return redisProxyClient.whenHashScan('Recipe:SearchWords')
-            .then(entries => {
-                for (const recipe of [recipe1, recipe2]) {
-                    for (const name of recipe.names)
-                    {
-                        for (const phrase of UpdateRecipe.prototype.getPhrases(name))
-                            assert.ok(entries[phrase].indexOf(recipe.id) >= 0)
-                    }
-                }
-                return Promise.resolve();
+     return redisProxyClient.whenKeys('Recipe:Autocomplete*')
+            .then(autoCompleteKeys => {
+                return Promise.all(_.map(autoCompleteKeys, redisProxyClient.whenMembers))
+                        .then(autoCompleteIds => {
+                            for (const recipe of [recipe1, recipe2]) {
+                                for (const name of recipe.names)
+                                {
+                                    for (const phrase of getPhrases(name)) {
+                                        const i = autoCompleteKeys.indexOf('Recipe:Autocomplete:' + phrase);
+                                        assert.ok(i >= 0)                                        
+                                        assert.ok(autoCompleteIds[i].includes(recipe.id))
+                                    }
+                                }
+                            } 
+                            return Promise.resolve();
+                        })
             })
 }
 
@@ -143,7 +156,7 @@ const whenAssertRecipesAdded = () => {
             .then(() => whenAssertSet('Recipe:OvernightPreparation', recipe1.overnightPreparation, recipe2.overnightPreparation))                    
             .then(() => whenAssertSet('Recipe:Region', recipe1.region, recipe2.region))                    
             .then(() => whenAssertSet('Recipe:SpiceLevel', recipe1.spiceLevel, recipe2.spiceLevel))  
-            .then(() => whenAssertSet('Recipe:Vegan', true, true))
+            .then(() => whenAssertSet('Recipe:Vegan', false, false))
             .then(() => whenAssertSet('Recipe:TotalTime', 'Slow', 'Regular'))
             .then(() => whenAssertNames(recipe1.id, recipe1.names))
             .then(() => whenAssertNames(recipe2.id, recipe2.names))

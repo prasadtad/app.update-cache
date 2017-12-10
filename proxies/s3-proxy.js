@@ -2,12 +2,13 @@
 
 const AWS = require('aws-sdk')
 const S3 = AWS.S3()
+const _ = require('lodash')
 
 module.exports = class S3Proxy
 {
     constructor(bucket) {
         this.bucket = bucket
-        this.whenGetObject = this.whenGetObject.bind(this)
+        _.bindAll(this, 'whenGetObject')
     }
 
     whenGetObject(key) {

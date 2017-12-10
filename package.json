@@ -11,7 +11,7 @@
     "s3"
   ],
   "author": "Sri Prasad Tadimalla",
-  "license": "AGPL",
+  "license": "AGPL-3.0",
   "engines": {
     "node": "6.10.3"
   },
@@ -22,9 +22,10 @@
     "aws-sdk": "2.156.0"
   },
   "dependencies": {
+    "lodash": "4.17.4",
     "redis": "2.8.0",
+    "redis-phrase-complete": "1.0.2",
     "redis-promisify": "0.1.0",
-    "underscore": "1.8.3",
     "util.promisify": "1.0.0"
   }
 }

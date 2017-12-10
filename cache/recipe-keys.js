@@ -5,6 +5,7 @@ module.exports = class RecipeKeys
     constructor(seperator)
     {
         this.seperator = seperator
+        this.Autocomplete = this.buildKey('Autocomplete')
         this.Names = this.buildKey('Names')
         this.ChefId = this.buildKey('ChefId')
         this.Collection = this.buildKey('Collection')
@@ -15,12 +16,6 @@ module.exports = class RecipeKeys
         this.SpiceLevel = this.buildKey('SpiceLevel')
         this.TotalTime = this.buildKey('TotalTime')
         this.Vegan = this.buildKey('Vegan')        
-
-        this.SearchWords = this.buildKey('SearchWords')
-
-        this.RecentSearches = this.buildKey('RecentSearches')
-
-        this.Locks = this.buildKey('Locks')
     }
 
     buildKey(set)

@@ -1,6 +1,6 @@
 // proxies/redis-proxy.js
 
-const _ = require('underscore')
+const _ = require('lodash')
 
 require('util.promisify/shim')()
 const redis = require('redis-promisify')
@@ -10,24 +10,33 @@ class Client
     constructor() {
         this.client = redis.createClient(process.env.CACHE_ENDPOINT)
         this.seperator = ':'
-        this.whenFlush = this.whenFlush.bind(this)
-        this.whenQuit = this.whenQuit.bind(this)
-        this.whenExists = this.whenExists.bind(this)
-        this.whenGet = this.whenGet.bind(this)
-        this.whenHscan = this.whenHscan.bind(this)
-        this.whenHashScan = this.whenHashScan.bind(this)
-        this.whenMembers = this.whenMembers.bind(this)
-        this.whenStore = this.whenStore.bind(this)
+        _.bindAll(this, 'whenFlush', 'whenQuit', 'whenKeys', 
+            'whenExists', 'whenGetString', 'whenSetString', 
+            'whenCount', 'whenGet', 'whenGetFlag', 'whenHashFields',
+            'whenHscan', 'whenHashScan', 'whenIsMember', 'whenMembers',
+            'whenSetOr', 'whenSetsAnd', 'whenStore')
     }
 
     whenFlush() { return this.client.flushdbAsync() }
-   
+    
     whenQuit() { return this.client.quitAsync() }
+
+    whenKeys(pattern) { return this.client.keysAsync(pattern) }
 
     whenExists(keys) { return this.client.existsAsync(...keys) }
 
+    whenGetString(setKey) { return this.client.getAsync(setKey) }
+
+    whenSetString(setKey, value, expiryMilliseconds) { return this.client.setAsync(setKey, value, 'PX', expiryMilliseconds) }
+
+    whenCount(setKey) { return this.client.scardAsync(setKey) }
+
     whenGet(setKey, hashField) { return this.client.hgetAsync(setKey, hashField) }
-   
+
+    whenGetFlag(setKey, hashField) { return this.whenGet(setKey, hashField).then(r => r === 'True' )}
+
+    whenHashFields(setKey) { return this.client.hkeysAsync(setKey) }
+
     whenHscan(cursor, results, setKey, hashFieldPattern) { 
         const args = [setKey, cursor]
         if (hashFieldPattern) {
@@ -48,13 +57,30 @@ class Client
     whenHashScan(setKey, hashFieldPattern) {
         return this.whenHscan('0', {}, setKey, hashFieldPattern)
     }
+
+    whenIsMember(setKey, value) { return this.client.sismemberAsync(setKey, value) }
     
     whenMembers(setKey) { return this.client.smembersAsync(setKey) }
 
+    whenSetOr(setPrefix, setNames) {
+        const setKeys = _.map(setNames, setName => setPrefix + this.seperator + setName)
+        const destination = setKeys.join('|')
+        return this.client.sunionstoreAsync(destination, setKeys)
+                    .then(() => this.client.expireAsync(destination, process.env.OPERATING_SETS_EXPIRE_SECONDS))
+                    .then(() => destination)
+    }
+
+    whenSetsAnd(setKeys) {
+        const destination = setKeys.join('&')
+        return this.client.sinterstoreAsync(destination, setKeys)
+                    .then(() => this.client.expireAsync(destination, process.env.OPERATING_SETS_EXPIRE_SECONDS))
+                    .then(() => destination)
+    }
+
     whenStore(batch) {
-        const setEntries = _.pick(batch, entry => entry instanceof SetEntry)
+        const setEntries = _.pickBy(batch, entry => entry instanceof SetEntry)
         const setPrefixes = _.keys(setEntries)
-        const hashEntries = _.pick(batch, entry => entry instanceof HashEntry)
+        const hashEntries = _.pickBy(batch, entry => entry instanceof HashEntry)
         const whenMembers = _.map(setPrefixes, this.whenMembers)
         let transaction = this.client.multi()
         for (const setKey of _.keys(hashEntries))
@@ -120,9 +146,7 @@ class SetChanges
 {
     constructor() {
         this.changes = {}
-        this.add = this.add.bind(this)
-        this.remove = this.remove.bind(this)
-        this.update = this.update.bind(this)
+        _.bindAll(this, 'add', 'remove', 'update')
     }
 
     add(key, value) {        
@@ -171,7 +195,7 @@ class HashEntry
     constructor(hashFields, values) {
         if (!Array.isArray(hashFields)) hashFields = [ hashFields ]
         if (!Array.isArray(values)) values = [ values ]
-        Object.assign(this, _.object(hashFields, _.map(values, value => {
+        Object.assign(this, _.zipObject(hashFields, _.map(values, value => {
             if (value == null || value == undefined)
                 return null;
             else if (typeof(value) === 'string')
