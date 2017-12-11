@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Lambda function to update recipeshelf redis cache",
   "scripts": {
-    "test": "set CACHE_ENDPOINT=redis://localhost:6379 && node tests.js"
+    "test": "set CACHE_ENDPOINT=redis://localhost:6379 && node tests.js",
+    "lambda": "node lambda.js"
   },
   "keywords": [
     "recipeshelf",
@@ -16,7 +17,9 @@
     "node": "6.10.3"
   },
   "devDependencies": {
-    "aws-sdk-mock": "1.7.0"
+    "aws-sdk-mock": "1.7.0",
+    "shelljs": "0.7.8",
+    "zip-folder": "1.0.0"
   },
   "optionalDependencies": {
     "aws-sdk": "2.156.0"
