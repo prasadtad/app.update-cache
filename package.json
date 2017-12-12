@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Lambda function to update recipeshelf redis cache",
   "scripts": {
-    "test": "set CACHE_ENDPOINT=redis://localhost:6379 && node tests.js",
-    "lambda": "node lambda.js"
+    "test": "set CACHE_ENDPOINT=redis://localhost:6379&&node tests.js"
   },
   "keywords": [
     "recipeshelf",

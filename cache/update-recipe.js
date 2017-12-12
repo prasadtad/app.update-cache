@@ -13,7 +13,7 @@ module.exports = class UpdateRecipe
         this.whenVeganIngredientIds = whenIngredients.then(ingredients => _.map(_.filter(ingredients, i => i.vegan), i => i.id))
         this.keys = new RecipeKeys(this.redisProxyClient.seperator)
         this.redisPhraseComplete = new RedisPhraseComplete({ client: this.redisProxyClient.client, namespace: this.keys.Autocomplete })
-        _.bindAll(this, 'buildKey', 'whenUpdateSearch', 'whenStore', 'whenRemove', 'whenDisconnect')
+        _.bindAll(this, 'buildKey', 'whenUpdateSearch', 'whenStore', 'whenRemove', 'whenQuit')
     }
     
     buildKey(setPrefix, flag) 
@@ -80,7 +80,7 @@ module.exports = class UpdateRecipe
             })
     }
 
-    whenDisconnect()
+    whenQuit()
     {
         return this.redisProxyClient.whenQuit()
     }

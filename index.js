@@ -9,7 +9,7 @@ const whenIngredients = s3Proxy.whenGetObject('ingredients.json')
 
 const UpdateRecipe = require('./cache/update-recipe')
 
-const whenDisconnect = (updateRecipe, err) => updateRecipe.whenDisconnect().then(() => Promise.reject(err))
+const whenQuit = (updateRecipe, err) => updateRecipe.whenQuit().then(() => Promise.reject(err))
 
 exports.whenHandler = (event) => {
     const updateRecipe = new UpdateRecipe(whenIngredients)
@@ -25,12 +25,12 @@ exports.whenHandler = (event) => {
             else
                 return Promise.reject('Unkown record type - ' + record.eventName)
         }))
-        .then(updateRecipe.whenDisconnect)
-        .catch(err => whenDisconnect(updateRecipe, err))
+        .then(updateRecipe.whenQuit)
+        .catch(err => whenQuit(updateRecipe, err))
     }
     catch (err)
     {
-        return whenDisconnect(updateRecipe, err)
+        return whenQuit(updateRecipe, err)
     }
 }
 

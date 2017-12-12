@@ -201,7 +201,6 @@ tests.push(redisProxyClient.whenFlush()
                     testMessages.push('Remove recipes')
                     return whenAssertRecipesRemoved()
                 })
-                .then()
             )            
 
 Promise.all(tests)
