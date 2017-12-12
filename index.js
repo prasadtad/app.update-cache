@@ -12,10 +12,11 @@ const UpdateRecipe = require('./cache/update-recipe')
 const whenQuit = (updateRecipe, err) => updateRecipe.whenQuit().then(() => Promise.reject(err))
 
 exports.whenHandler = (event) => {
+    if (!event || !event.Records) return Promise.reject(new Error('Invalid event - ' + JSON.stringify(event)))
+    console.info(JSON.stringify(event))
     const updateRecipe = new UpdateRecipe(whenIngredients)
     try
-    {
-        if (!event || !event.Records) return Promise.reject(new Error('Invalid event - ' + JSON.stringify(event)))
+    {        
         return Promise.all(_.map(event.Records, record => {
             const whenRecipe = s3Proxy.whenGetObject(record.s3.object.key)
             if (record.eventName.startsWith('ObjectCreated:'))

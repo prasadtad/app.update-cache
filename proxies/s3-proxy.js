@@ -1,7 +1,7 @@
 // proxies/s3-proxy.js
 
 const AWS = require('aws-sdk')
-const S3 = AWS.S3()
+const S3 = new AWS.S3()
 const _ = require('lodash')
 
 module.exports = class S3Proxy

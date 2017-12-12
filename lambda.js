@@ -1,5 +1,6 @@
 const shell = require('shelljs')
-const zipFolder = require('zip-folder')
+const fs = require('fs')
+const archiver = require('archiver')
 
 shell.rm('-rf', 'dist')
 shell.mkdir('dist')
@@ -8,14 +9,18 @@ shell.cd('dist')
 shell.exec('npm install --production --no-optional')
 shell.rm('package-lock.json')
 shell.rm('package.json')
+shell.cd('..')
 
-zipFolder('.', '../lambda.zip', function(err) {
-    if(err) 
-        console.log(err);
-    else {
-        shell.cd('..')
-        shell.rm('-rf', 'dist')
-        console.log('done');
-    }
+const output = fs.createWriteStream('index.zip') 
+const archive = archiver('zip')
+
+output.on('close', () => {    
+    shell.rm('-rf', 'dist')
+    console.log('done')
 })
+
+archive.pipe(output)
+
+archive.directory('dist/', false)
+    .finalize()
 
