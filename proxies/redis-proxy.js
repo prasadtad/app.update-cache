@@ -10,7 +10,7 @@ class Client
     constructor() {
         this.client = redis.createClient(process.env.CACHE_ENDPOINT)
         this.seperator = ':'
-        _.bindAll(this, 'whenFlush', 'whenQuit', 'whenKeys', 
+        _.bindAll(this, 'whenFlush', 'whenQuit', 'whenKeys', 'whenPrefixMembers',
             'whenExists', 'whenGetString', 'whenSetString', 
             'whenCount', 'whenGet', 'whenGetFlag', 'whenHashFields',
             'whenHscan', 'whenHashScan', 'whenIsMember', 'whenMembers',
@@ -20,6 +20,11 @@ class Client
     whenFlush() { return this.client.flushdbAsync() }
     
     whenQuit() { return this.client.quitAsync() }
+
+    whenPrefixMembers(prefix) {
+        return this.whenKeys(prefix + '*')
+                    .then(keys => _.map(keys, k => k.substring(prefix.length+1)))
+    }
 
     whenKeys(pattern) { return this.client.keysAsync(pattern) }
 
@@ -81,7 +86,7 @@ class Client
         const setEntries = _.pickBy(batch, entry => entry instanceof SetEntry)
         const setPrefixes = _.keys(setEntries)
         const hashEntries = _.pickBy(batch, entry => entry instanceof HashEntry)
-        const whenMembers = _.map(setPrefixes, this.whenMembers)
+        const whenPrefixMembers = _.map(setPrefixes, this.whenPrefixMembers)
         let transaction = this.client.multi()
         for (const setKey of _.keys(hashEntries))
         {
@@ -95,7 +100,7 @@ class Client
                     transaction.hdel(setKey, hashField)
             }
         }
-        return Promise.all(whenMembers).then(members => {    
+        return Promise.all(whenPrefixMembers).then(members => {    
             const setChanges = new SetChanges()                    
             for (let i = 0; i < setPrefixes.length; i++)
             {
@@ -113,31 +118,11 @@ class Client
                         if (!setName) continue;
                         // Add new entries
                         setChanges.add(setPrefixes[i] + this.seperator + setName, setEntry.value)                   
-                        setChanges.add(setPrefixes[i], setName)
                     }
                 }
             }                        
             setChanges.update(transaction)
-            return transaction.execAsync()           
-                        .then(() => {
-                            const promises = []      
-                            transaction = this.client.multi()                      
-                            for (let i = 0; i < setPrefixes.length; i++)
-                            {
-                                promises.push(..._.map(members[i], setName => 
-                                    this.whenExists(setPrefixes[i] + this.seperator + setName)
-                                        .then(exists => {
-                                            if (!exists)
-                                                transaction.srem(setPrefixes[i], setName)
-                                            return Promise.resolve()
-                                        })
-                                ))                                
-                            }
-                            return Promise.all(promises)
-                                          .then(() => 
-                                          transaction.execAsync()
-                                        )
-                        })
+            return transaction.execAsync()
         })               
     }
 }

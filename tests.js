@@ -90,7 +90,7 @@ const whenAssertSet = (setPrefix, expected1, expected2) => {
     expected.push(...expected1)
     expected.push(...expected2)
     expected = Array.from(new Set(expected)).sort()
-    return redisProxyClient.whenMembers(setPrefix)
+    return redisProxyClient.whenPrefixMembers(setPrefix)
                 .then(members => {
                     members = members.sort()
                     assert.deepEqual(members, expected)
