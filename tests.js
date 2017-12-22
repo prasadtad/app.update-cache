@@ -94,8 +94,8 @@ const whenAssertRecipesAdded = () => {
                 return Promise.resolve()
             })
             .then(() => redisPhraseComplete.whenFind('peanut'))
-            .then(ids => {
-                assert.deepEqual(ids, ['NXkkUWRu'])
+            .then(results => {
+                assert.deepEqual(results, [{ sentence: 'Eggplant in a Peanut-Sesame Gravy', id: 'NXkkUWRu' }])
                 return Promise.resolve()
             })
 }
@@ -112,8 +112,8 @@ const whenAssertRecipesRemoved = () => {
                 return Promise.resolve()
             })
             .then(() => redisPhraseComplete.whenFind('peanut'))
-            .then(ids => {
-                assert.deepEqual(ids, [])
+            .then(results => {
+                assert.deepEqual(results, [])
                 return Promise.resolve()
             })
 }
@@ -146,5 +146,7 @@ Promise.all(tests)
             console.info(_.map(testMessages, m => m + ' - passed').join('\n'))
             process.exit()
         })
-
-
+        .catch(err => {
+            console.error(err)
+            process.exit()            
+        })

@@ -14,11 +14,19 @@ module.exports = class UpdateRecipe
         _.bindAll(this, 'whenUpdateSearch', 'whenStore', 'whenRemove', 'whenQuit')
     }
 
-    whenUpdateSearch(id, oldNames, newNames) 
+    whenUpdateSearch(oldRecipe, newRecipe) 
     {
-        oldNames = oldNames || []
-        newNames = newNames || [] 
+        oldRecipe = oldRecipe || { }
+        newRecipe = newRecipe || { }
+
+        const id = newRecipe ? newRecipe.id : oldRecipe.id
+
+        let oldNames = oldRecipe.names || []
+        let newNames = newRecipe.names || [] 
         
+        if (!oldRecipe.approved) oldNames = []
+        if (!newRecipe.approved) newNames = []
+
         const sentencesToRemove = _.without(oldNames, newNames)
         const sentencesToAdd = _.without(newNames, oldNames)
 
@@ -29,7 +37,7 @@ module.exports = class UpdateRecipe
     whenStore(recipe)
     {
         return this.redisPoco.whenGet(recipe.id)
-            .then(oldRecipe => this.whenUpdateSearch(recipe.id, oldRecipe ? oldRecipe.names : null, recipe.names))
+            .then(oldRecipe => this.whenUpdateSearch(oldRecipe, recipe))
             .then(() => {
                 if (this.veganIngredientIds) return Promise.resolve(this.veganIngredientIds)
                 return this.whenIngredients.then(ingredients => Promise.resolve(_.map(_.filter(ingredients, i => i.vegan), i => i.id)))
@@ -47,7 +55,7 @@ module.exports = class UpdateRecipe
     whenRemove(id)
     {
         return this.redisPoco.whenGet(id)
-            .then(oldRecipe => this.whenUpdateSearch(id, oldRecipe.names))
+            .then(oldRecipe => this.whenUpdateSearch(oldRecipe))
             .then(() => this.redisPoco.whenRemove(id))
     }
 
