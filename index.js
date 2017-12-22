@@ -18,11 +18,10 @@ exports.whenHandler = (event) => {
     try
     {        
         return Promise.all(_.map(event.Records, record => {
-            const whenRecipe = s3Proxy.whenGetObject(record.s3.object.key)
             if (record.eventName.startsWith('ObjectCreated:'))
-                return whenRecipe.then(updateRecipe.whenStore)
+                return s3Proxy.whenGetObject(record.s3.object.key).then(updateRecipe.whenStore)
             else if (record.eventName.startsWith('ObjectRemoved:'))
-                return whenRecipe.then(updateRecipe.whenRemove)
+                return updateRecipe.whenRemove(record.s3.object.key.split('/')[1].split('.')[0])
             else
                 return Promise.reject('Unkown record type - ' + record.eventName)
         }))
