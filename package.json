@@ -6,8 +6,7 @@
     "test": "set CACHE_ENDPOINT=redis://localhost:6379&&node tests.js"
   },
   "keywords": [
-    "recipeshelf",
-    "s3"
+    "recipeshelf"
   ],
   "author": "Sri Prasad Tadimalla",
   "license": "AGPL-3.0",
