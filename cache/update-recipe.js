@@ -6,10 +6,10 @@ const RedisPhraseComplete = require('redis-phrase-complete')
 
 module.exports = class UpdateRecipe
 {
-    constructor(whenIngredients)
+    constructor()
     {        
         this.redisPoco = new RedisPoco({ namespace: 'recipe', itemKey: 'item', endpoint: process.env.CACHE_ENDPOINT, attributes: [ 'vegan', 'totalTimeInMinutes', 'approved', 'spiceLevel', 'region', 'cuisine', 'chefId', 'ingredientIds', 'overnightPreparation', 'accompanimentIds', 'collections' ]})
-        this.whenIngredients = whenIngredients
+        this.ingredientsPoco = new RedisPoco({ namespace: 'ingredient', itemKey: 'item', endpoint: process.env.CACHE_ENDPOINT, attributes: [ 'vegan', 'category' ]})
         this.redisPhraseComplete = new RedisPhraseComplete({ namespace: 'recipe:autocomplete', client: this.redisPoco.client })
         _.bindAll(this, 'whenUpdateSearch', 'whenStore', 'whenRemove', 'whenQuit')
     }
@@ -38,10 +38,7 @@ module.exports = class UpdateRecipe
     {
         return this.redisPoco.whenGet(recipe.id)
             .then(oldRecipe => this.whenUpdateSearch(oldRecipe, recipe))
-            .then(() => {
-                if (this.veganIngredientIds) return Promise.resolve(this.veganIngredientIds)
-                return this.whenIngredients.then(ingredients => Promise.resolve(_.map(_.filter(ingredients, i => i.vegan), i => i.id)))
-            })
+            .then(() => this.ingredientsPoco.whenFilter({vegan: true}))
             .then(veganIngredientIds => {
                 this.veganIngredientIds = veganIngredientIds
                 return Promise.resolve(recipe.ingredientIds.every(ingredientId => veganIngredientIds.includes(ingredientId)))

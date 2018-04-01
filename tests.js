@@ -6,6 +6,9 @@ var assert = require('assert')
 const fs = require('fs')
 const path = require('path')
 
+require('util.promisify/shim')()
+const redis = require('redis-promisify')
+
 const AWS = require('aws-sdk-mock')
 const AWS_SDK = require('aws-sdk')
 AWS.setSDKInstance(AWS_SDK)
@@ -77,6 +80,36 @@ const deleteEvent = {
     ]
 }
 
+const whenLoadTestData = () => {
+    const testData = JSON.parse(fs.readFileSync(path.join(__dirname, './testfiles/testdata.json')))
+    const client = redis.createClient(process.env.CACHE_ENDPOINT)
+    return client.flushdbAsync()
+                .then(() => {
+                    const trans = client.multi()
+                    for (const key of _.keys(testData))
+                    {
+                        if (Array.isArray(testData[key])) {
+                            for (const value of testData[key])
+                            {
+                                if (_.isObject(value)) {
+                                    for (const id of _.keys(value))
+                                        trans.zadd(key, value[id], id)
+                                }
+                                else
+                                    trans.sadd(key, testData[key])
+                            }
+                        }
+                        else
+                        {
+                            for (const hashField of _.keys(testData[key]))
+                                trans.hset(key, hashField, testData[key][hashField])
+                        }
+                    }
+                    return trans.execAsync()
+                })
+                .then(() => client.quitAsync())
+}
+
 const recipe1 = JSON.parse(fs.readFileSync(path.join(__dirname, 'testfiles/recipes/3uDSc4Vg.json')))
 const recipe2 = JSON.parse(fs.readFileSync(path.join(__dirname, 'testfiles/recipes/NXkkUWRu.json')))
 
@@ -119,6 +152,8 @@ const whenAssertRecipesRemoved = () => {
 }
 
 let testMessages = [], tests = []
+
+tests.push(whenLoadTestData())
   
 tests.push(index.whenHandler({blah: true})
             .catch(err => {

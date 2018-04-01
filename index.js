@@ -5,8 +5,6 @@ const _ = require('lodash')
 const S3Proxy = require('./proxies/s3-proxy'),
     s3Proxy = new S3Proxy('recipeshelf')
 
-const whenIngredients = s3Proxy.whenGetObject('ingredients.json')
-
 const UpdateRecipe = require('./cache/update-recipe')
 
 const whenQuit = (updateRecipe, err) => updateRecipe.whenQuit().then(() => Promise.reject(err))
@@ -14,7 +12,7 @@ const whenQuit = (updateRecipe, err) => updateRecipe.whenQuit().then(() => Promi
 exports.whenHandler = (event) => {
     if (!event || !event.Records) return Promise.reject(new Error('Invalid event - ' + JSON.stringify(event)))
     console.info(JSON.stringify(event))
-    const updateRecipe = new UpdateRecipe(whenIngredients)
+    const updateRecipe = new UpdateRecipe()
     try
     {        
         return Promise.all(_.map(event.Records, record => {
